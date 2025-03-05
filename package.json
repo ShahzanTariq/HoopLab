@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --build",
-    "start": "node ./dist/testserver.js"
+    "start": "node ./dist/testserver.js",
+    "dev": "nodemon ./src/testserver.ts"
   },
   "repository": {
     "type": "git",
@@ -23,7 +24,7 @@
     "aws-sdk": "^2.1692.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-  } "express": "^4.21.2"
+   "express": "^4.21.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
