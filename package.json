@@ -26,7 +26,12 @@
     "aws-sdk": "^2.1692.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+<<<<<<< HEAD
     "express": "^4.21.2"
+=======
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9"
+>>>>>>> 47ef6863dc4b14a876a34739513e468a05c79607
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
