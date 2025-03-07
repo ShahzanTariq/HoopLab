@@ -1,13 +1,13 @@
 {
-  "name": "hooplab",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --build",
-    "start": "node ./dist/testserver.js",
-    "dev": "nodemon ./src/testserver.ts"
+    "start": "node ./dist/server.js",
+    "dev": "nodemon ./src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -37,4 +37,5 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   }
+  
 }
