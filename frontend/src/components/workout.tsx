@@ -6,7 +6,7 @@ const Workout: React.FC = () => {
   useEffect(() => {
     const fetchWorkouts = async () => {
       try {
-        const response = await fetch('/api/workouts');
+        const response = await fetch('http://localhost:5000/workouts');
         const data = await response.json();
         setWorkouts(data);
       } catch (error) {
@@ -22,7 +22,7 @@ const Workout: React.FC = () => {
       <h2>Workouts</h2>
       <ul>
         {workouts.map((workout: any) => (
-          <li key={workout.id}>{workout.name} - {workout.reps} reps</li>
+          <li key={workout.workoutid}>{workout.name} - {workout.reps} reps</li>
         ))}
       </ul>
     </div>
