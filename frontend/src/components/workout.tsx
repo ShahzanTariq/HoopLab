@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Dropdown from './dropdown';
-import { MantineProvider } from '@mantine/core';
 
 const Workout: React.FC = () => {
   const [workouts, setWorkouts] = useState([]);
