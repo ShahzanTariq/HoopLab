@@ -22,6 +22,13 @@ router.get('/workouts', async (req: Request, res: Response) => {
   try {
     const command = new ScanCommand(params);
     const response = await dynamoDBClient.send(command);
+
+    // Convert DynamoDB String Sets (`SS`) to arrays
+    const formattedItems = response.Items?.map(item => ({
+      ...item,
+      category: item.category?.SS ?? []  // Convert `SS` set to a normal array
+    }));
+
     console.log('✅ Successfully fetched data from DynamoDB:', response.Items);
     res.json(response.Items); // Return the fetched items
   } catch (error) {
