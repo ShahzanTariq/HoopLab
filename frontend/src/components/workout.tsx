@@ -13,13 +13,20 @@ const Workout: React.FC = () => {
     4: 'Professional'
   };
 
-  //Fetches workouts from the database
+  // Fetches workouts from the database
   useEffect(() => {
     const fetchWorkouts = async () => {
       try {
         const response = await fetch('http://localhost:5000/workouts');
         const data = await response.json();
-        setWorkouts(data);
+        const workoutsWithCategorySet = data.map((workout: any) => {
+          const categorySet = new Set(workout.category || []); // Handle empty categories
+          return {
+            ...workout,
+            category: categorySet
+          };
+        });
+        setWorkouts(workoutsWithCategorySet);
       } catch (error) {
         console.error('Error fetching workouts:', error);
       }
@@ -27,12 +34,13 @@ const Workout: React.FC = () => {
 
     fetchWorkouts();
   }, []);
-  //Filters workouts based on selected level and category
+
+  // Filters workouts based on selected level and category
   const filteredWorkouts = workouts.filter((workout: any) => {
-    const levelText = levelMap[workout.level as keyof typeof levelMap]; //Convert Level number to text
+    const levelText = levelMap[workout.level as keyof typeof levelMap]; // Convert Level number to text
     const levelMatch = selectedLevel.length === 0 || selectedLevel.includes(levelText);
     const categoryMatch = selectedCategory.length === 0 || 
-      selectedCategory.some(c => c.toLowerCase() === workout.category.toLowerCase());
+      selectedCategory.some(c => workout.category.has(c.toLowerCase()));
     return levelMatch && categoryMatch;
   });
 
@@ -51,15 +59,16 @@ const Workout: React.FC = () => {
         label="Select Category"
         onSelect={(category) => setSelectedCategory(category)}
       />
+      
       <h3>Filtered Workouts</h3>
       <ul>
         {filteredWorkouts.map((workout: any) => (
           <li key={workout.workoutID}>
             <strong>{workout.workoutName}</strong> - {workout.sets} x {workout.reps} reps
             <br />
-            Level: {workout.level as keyof typeof levelMap}
+            Level: {levelMap[workout.level as keyof typeof levelMap]}
             <br />
-            Category: {workout.category}
+            Categories: {[...workout.category].join(', ')}
             <br />
             Description: {workout.description}
             <br />
