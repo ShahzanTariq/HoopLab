@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Dropdown from './dropdown';
+import Dropdown from '../components/dropdown';
 
 const Workout: React.FC = () => {
   const [workouts, setWorkouts] = useState([]);

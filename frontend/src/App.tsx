@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NavBar from './components/navbar';
-import Workout from './components/workout';
+import Workout from './pages/workout';
 import './App.css';
 import { useAuth } from "react-oidc-context";
 import LogButton from './components/logbutton';
