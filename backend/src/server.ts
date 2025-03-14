@@ -24,25 +24,24 @@ const docClient = DynamoDBDocumentClient.from(dynamoClient);
 
 app.use(cors());
 
-// 🏀 Test Route: Check if the server is running
+// Test Route: Check if the server is running
 app.get("/", (req: Request, res: Response) => {
-  res.send("Test Server is running! 🏀");
+  res.send("Test Server is running! ");
 });
 
-// 🏀 Sample API Endpoint
+// Sample API Endpoint
 app.get("/dynamodb-data", async (req: Request, res: Response) => {
   try {
     const command = new ScanCommand({ TableName: process.env.DYNAMODB_TABLE! });
     const response = await docClient.send(command);
     res.json(response.Items); // Return the fetched items
   } catch (error) {
-    console.error("❌ Error fetching data from DynamoDB:", error);
+    console.error("Error fetching data from DynamoDB:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 });
 
 app.get("/workouts", async (req: Request, res: Response) => {
-  console.log("Fetch is working for /workouts")
   const command = new ScanCommand({ 
     TableName: process.env.DYNAMODB_TABLE!
    });
@@ -51,12 +50,12 @@ app.get("/workouts", async (req: Request, res: Response) => {
     const response = await docClient.send(command);
     res.json(response.Items); // Return the fetched items
   } catch (error) {
-    console.error("❌ Error fetching data from DynamoDB:", error);
+    console.error("Error fetching data from DynamoDB:", error);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 });
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`✅ Test Server is running on http://localhost:${PORT}`);
+  console.log(`Test Server is running on http://localhost:${PORT}`);
 });
