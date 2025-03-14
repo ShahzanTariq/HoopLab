@@ -22,7 +22,7 @@ function App() {
     console.log("Signing out...");
     auth.removeUser()
     const clientId = "6ciq9qotdr1snk75j014hg6q49";
-    const logoutUri = "http://localhost:3000/workout";
+    const logoutUri = "http://localhost:3000/";
     const cognitoDomain = "https://ca-central-12ndsdd4r9.auth.ca-central-1.amazoncognito.com";
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
@@ -54,8 +54,8 @@ function App() {
         <div>
           
           <button onClick={() => auth.signinRedirect()}>Sign in</button>
-          <button onClick={() => signOutRedirect()}>Sign out</button>
-          <p>{auth.user?.profile.name}</p>
+          <button onClick={signOutRedirect}>Sign out</button>
+          <div>{auth.user?.profile.name || 'Guest'}</div>
           <NavBar 
             brandName="HoopLab" 
             imageSrcPath={''} 

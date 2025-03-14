@@ -32,7 +32,7 @@ const Workout: React.FC = () => {
     const levelText = levelMap[workout.level as keyof typeof levelMap]; //Convert Level number to text
     const levelMatch = selectedLevel.length === 0 || selectedLevel.includes(levelText);
     const categoryMatch = selectedCategory.length === 0 || 
-    selectedCategory.some(c => workout.category.has(c.toLowerCase()));
+    selectedCategory.some(c => workout.category.includes(c.toLowerCase()));
     return levelMatch && categoryMatch;
   });
 
