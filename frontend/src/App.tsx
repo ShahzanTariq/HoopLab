@@ -13,11 +13,19 @@ function App() {
 
   useEffect(() => {
     if (!auth.isLoading) {
-      console.log("User is authenticated:", auth.isAuthenticated);
-      console.log("User info:", auth.user?.profile.email);
+        console.log("User is authenticated:", auth.isAuthenticated);
+        console.log("User info:", auth.user); // Log the entire user object for more details
     }
-  }, [auth.isLoading, auth.isAuthenticated]);
+}, [auth.isLoading, auth.isAuthenticated, auth.user]);
 
+  const signOutRedirect = () => {
+    console.log("Signing out...");
+    auth.removeUser()
+    const clientId = "6ciq9qotdr1snk75j014hg6q49";
+    const logoutUri = "http://localhost:3000/workout";
+    const cognitoDomain = "https://ca-central-12ndsdd4r9.auth.ca-central-1.amazoncognito.com";
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+  };
   
 
   if (auth.isLoading) {
@@ -28,26 +36,26 @@ function App() {
     return <div>Encountering error... {auth.error.message}</div>;
   }
 
-  // if (auth.isAuthenticated) {
+  // if (auth.isAuthenticated) {  // Check if the user is authenticated
+  //   const userName = auth.user?.profile.name || auth.user?.profile.given_name || "User"; // Get name; provide default if not available
+  //   // OR
+  //   const userEmail = auth.user?.profile.email; //get email
   //   return (
   //     <div>
-  //       <pre> Hello: {auth.user?.profile.email} </pre>
-  //       <pre> ID Token: {auth.user?.id_token} </pre>
-  //       <pre> Access Token: {auth.user?.access_token} </pre>
-  //       <pre> Refresh Token: {auth.user?.refresh_token} </pre>
-
-  //       <button onClick={() => auth.removeUser()}>Sign out</button>
+  //       <p>Hello, {userName}!</p>  {/* Display the user's name */}
+  //       <p>Your email: {userEmail}</p> {/* Display user's email */}
+  //       <button onClick={() => auth.signoutRedirect()}>Sign Out</button>
   //     </div>
   //   );
   // }
-  
 
   return (
       <Router>
         <div>
           
           <button onClick={() => auth.signinRedirect()}>Sign in</button>
-          <button onClick={() => auth.signoutRedirect()}>Sign out</button>
+          <button onClick={() => signOutRedirect()}>Sign out</button>
+          <p>{auth.user?.profile.name}</p>
           <NavBar 
             brandName="HoopLab" 
             imageSrcPath={''} 

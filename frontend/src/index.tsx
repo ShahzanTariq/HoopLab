@@ -7,12 +7,12 @@ import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from "react-oidc-context";
 
 const cognitoAuthConfig = {
-  authority: "https://cognito-idp.ca-central-1.amazonaws.com/ca-central-1_xxxxxx",
-  client_id: "xxxxxx",
+  authority: "https://cognito-idp.ca-central-1.amazonaws.com/ca-central-1_2nDSdD4R9",
+  client_id: "6ciq9qotdr1snk75j014hg6q49",
   redirect_uri: "http://localhost:3000/",
-  post_logout_redirect_uri: 'http://localhost:3000/',
+  post_logout_redirect_uri: 'http://localhost:3000/workout',
   response_type: "code",
-  scope: "email openid",
+  scope: "email openid profile",
 };
 
 
