@@ -45,20 +45,16 @@ export function Header() {
 
     return (
     <header className={classes.header}>
-        <Container size="md" className={classes.inner}>
-        <Image
-                    src={Logo}
-                    alt="HoopLab Logo"
-                    width={500}
-                    height={150} 
-                    fit="contain" 
-                />
-        <Group gap={5} visibleFrom="xs">
-            {items}
-        </Group>
-        <LogButton />
+        <Container size="100%" className={classes.inner}>
+            <div className={classes.logo}>    
+                <Image src={Logo} alt="HoopLab Logo" width="auto" height="150" fit="contain"/>
+            </div>
+            <Group gap={20} visibleFrom="xs" className={classes.navItems}>
+                {items}
+            </Group>
+            <LogButton />
 
-        <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+            <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
         </Container>
     </header>
     );
