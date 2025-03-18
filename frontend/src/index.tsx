@@ -4,7 +4,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { AuthProvider } from "react-oidc-context";
-import { createTheme,MantineProvider } from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
 
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.ca-central-1.amazonaws.com/ca-central-1_2nDSdD4R9",
@@ -14,11 +14,6 @@ const cognitoAuthConfig = {
   response_type: "code",
   scope: "email openid profile",
 };
-
-const theme = createTheme({
-  fontFamily: 'Open Sans, sans-serif',
-  primaryColor: 'cyan',
-});
 
 
 const root = ReactDOM.createRoot(
