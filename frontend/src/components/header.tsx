@@ -11,7 +11,7 @@ import LogButton from './logbutton';
 
 
 
-export function Header() {
+function Header() {
     const auth = useAuth();
 
     let links = [

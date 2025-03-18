@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Select from '../components/multiselect';
+import TableSelection from '../components/table';
 
 const Workout: React.FC = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -52,7 +53,9 @@ const Workout: React.FC = () => {
         placeholder = "Click here to select categories"
         onChange={(category) => setSelectedCategory(category)}
       />
-      <h3>Filtered Workouts</h3>
+      
+      <h3>Our Workouts</h3>
+      <TableSelection data={workouts} />
       <ul>
         {filteredWorkouts.map((workout: any) => (
           <li key={workout.workoutID}>
@@ -70,6 +73,7 @@ const Workout: React.FC = () => {
           </li>
         ))}
       </ul>
+      
     </div>
   );
 };
