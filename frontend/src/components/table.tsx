@@ -1,21 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import cx from 'clsx';
 import {Checkbox, Group, ScrollArea, Table, Text } from '@mantine/core';
 import classes from './TableSelection.module.css';
 
 interface TableProps{
     data: any[];
+    onSelectionChange: (selectedRows: string[]) => void;
 }
 
 
-const TableSelection: React.FC<TableProps> = ({data}) => {
+const TableSelection: React.FC<TableProps> = ({data, onSelectionChange}) => {
     const [selection, setSelection] = useState(['1']);
+    
     const toggleRow = (id: string) =>
         setSelection((current) =>
         current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
         );
-    const toggleAll = () =>
+    
+        const toggleAll = () =>
         setSelection((current) => (current.length === data.length ? [] : data.map((item) => item.workoutID)));
+
+    useEffect(() => {
+        onSelectionChange(selection); // Call callback whenever selection changes
+        console.log(selection);
+    }, [selection, onSelectionChange]);
 
     const rows = data.map((item) => {
         const selected = selection.includes(item.workoutID);
