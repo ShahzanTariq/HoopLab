@@ -3,35 +3,38 @@ import cx from 'clsx';
 import {Checkbox, Group, ScrollArea, Table, Text } from '@mantine/core';
 import classes from './TableSelection.module.css';
 
-interface TableProps{
-    data: any[];
-    onSelectionChange: (selectedRows: string[]) => void;
-}
+    interface TableProps {
+        data: any[];
+        onSelectionChange: (selectedRows: any[]) => void; // Changed type to any[]
+    }
 
+    const TableSelection: React.FC<TableProps> = ({ data, onSelectionChange }) => {
+    const [selection, setSelection] = useState<any[]>([]); // Changed type to any[]
 
-const TableSelection: React.FC<TableProps> = ({data, onSelectionChange}) => {
-    const [selection, setSelection] = useState(['1']);
-    
-    const toggleRow = (id: string) =>
+    const toggleRow = (item: any) => {
         setSelection((current) =>
-        current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
+            current.includes(item)
+                ? current.filter((currentItem) => currentItem.workoutID !== item.workoutID) // Compare workoutIDs
+                : [...current, item]
         );
-    
-        const toggleAll = () =>
-        setSelection((current) => (current.length === data.length ? [] : data.map((item) => item.workoutID)));
+    };
+
+    const toggleAll = () => {
+        setSelection((current) => (current.length === data.length ? [] : [...data])); // Use spread operator
+    };
 
     useEffect(() => {
-        onSelectionChange(selection); // Call callback whenever selection changes
-        console.log(selection);
+        onSelectionChange(selection);
     }, [selection, onSelectionChange]);
 
+
     const rows = data.map((item) => {
-        const selected = selection.includes(item.workoutID);
+        const selected = selection.includes(item);
         return (
-        <Table.Tr key={item.workoutID} className={cx({ [classes.rowSelected]: selected })}>
-            <Table.Td>
-            <Checkbox checked={selection.includes(item.workoutID)} onChange={() => toggleRow(item.workoutID)} />
-            </Table.Td>
+            <Table.Tr key={item.workoutID} className={cx({ [classes.rowSelected]: selected })}>
+                <Table.Td>
+                    <Checkbox checked={selected} onChange={() => toggleRow(item)} />
+                </Table.Td>
             <Table.Td>
             <Group gap="sm">
                 <Text size="sm" fw={500}>

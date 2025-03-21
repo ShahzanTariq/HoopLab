@@ -4,6 +4,8 @@ import cors from "cors";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, UpdateCommand, GetCommand, ScanCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
+import bodyParser from 'body-parser';
+import { Redshift } from "aws-sdk";
 
 // Load environment variables
 dotenv.config();
@@ -11,6 +13,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(bodyParser.json());
 // Initialize DynamoDB Client
 const dynamoClient = new DynamoDBClient({
   region: process.env.AWS_REGION, // e.g., "us-east-1"
@@ -69,14 +72,15 @@ app.get("/workouts", async (req: Request, res: Response) => {
 
 app.post('/api/workoutPlan/create', async (req: Request<{}, {}, { userId: string, planName: string }>, res: Response) => {
   try {
-    const { userId, planName } = req.body;
-    const planId = uuidv4();
+    const userID = req.body.userId;
+    const planName = req.body.planName;
+    const planID = uuidv4();
 
     const params = {
       TableName: process.env.DYNAMODB_TABLE_PLANS!,
       Item: {
-        userId,
-        planId,
+        userID,
+        planID,
         planName,
         workouts: [], 
         updatedAt: new Date().toISOString(),
@@ -85,7 +89,7 @@ app.post('/api/workoutPlan/create', async (req: Request<{}, {}, { userId: string
 
     await docClient.send(new PutCommand(params));
 
-    res.status(201).json({ planId }); 
+    res.status(201).json({ planID }); 
   } catch (error) {
     console.error('Error creating workout plan:', error);
     res.status(500).json({ message: 'Error creating workout plan' });
@@ -93,19 +97,21 @@ app.post('/api/workoutPlan/create', async (req: Request<{}, {}, { userId: string
 });
 
 
-app.post('/api/workoutPlan/addWorkouts', async (req: Request<{}, {}, { userId: string, planId: string, workouts: { workoutId: string, sets: number, reps: number }[] }>
+app.post('/api/workoutPlan/addWorkouts', async (req: Request<{}, {}, { userId: string, planId: string, workouts: { workoutId: string, workoutName: string, sets: number, reps: number }[] }>
 , res: Response) => {
   try {
-    const { userId, planId, workouts } = req.body;
+    const userID = req.body.userId;
+    const planID = req.body.planId;
+    const workouts = req.body.workouts;
 
-    if(!workouts || !Array.isArray(workouts) || workouts.some(workout => !workout.workoutId || !workout.sets || !workout.reps)){
+    if(!workouts || !Array.isArray(workouts) || workouts.some(workout => !workout.workoutId || !workout.sets || !workout.reps || !workout.workoutName)) {
       res.status(400).json({message: "Invalid workout data"});  
       return;
     }
 
     const getParams = {
       TableName: process.env.DYNAMODB_TABLE_PLANS!,
-      Key: { userId, planId },
+      Key: { userID, planID },
     };
 
     const existingPlan = await docClient.send(new GetCommand(getParams));
@@ -119,7 +125,7 @@ app.post('/api/workoutPlan/addWorkouts', async (req: Request<{}, {}, { userId: s
 
     const updateParams = {
         TableName: process.env.DYNAMODB_TABLE_PLANS!,
-        Key: { userId, planId },
+        Key: { userID, planID },
         UpdateExpression: "SET workouts = :workouts, updatedAt = :updatedAt",
         ExpressionAttributeValues: {
             ":workouts": updatedWorkouts,
@@ -146,11 +152,12 @@ app.get('/api/workoutPlan/user/:userId', async (req: Request, res: Response) => 
   try{
       const params = {
           TableName: process.env.DYNAMODB_TABLE_PLANS!,
-          KeyConditionExpression: "userId = :userId",
+          KeyConditionExpression: 'userID = :uid',
           ExpressionAttributeValues: {
-              ":userId": userId
-          }
-      };
+                ':uid': userId,
+          },
+        };
+      
       const result = await docClient.send(new QueryCommand(params)); //Use QueryCommand
       res.json(result.Items);
 
