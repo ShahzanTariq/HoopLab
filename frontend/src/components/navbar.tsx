@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
+import { useAuth } from 'react-oidc-context';
 
 interface NavBarProps {
   brandName: string;
@@ -10,6 +11,7 @@ interface NavBarProps {
 
 function NavBar({ brandName, imageSrcPath, navItems }: NavBarProps) {
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const auth = useAuth();
 
   return (
     <nav className="navbar">
@@ -32,16 +34,23 @@ function NavBar({ brandName, imageSrcPath, navItems }: NavBarProps) {
             className="nav-item"
             onClick={() => setSelectedIndex(index)}
           >
-            <Link
-              className={
-                selectedIndex === index
-                  ? "nav-link active fw-bold"
-                  : "nav-link"
+             {item === auth.user?.profile.name ? (
+                  <a // Or Link if you are using a routing solution
+                      className={selectedIndex === index ? "nav-link active fw-bold" : "nav-link"}
+
+                      href={`/user/${encodeURIComponent(auth.user?.profile.name)}`}
+                  >
+                      {item}
+                  </a>
+              ) : (
+                  <Link
+                      className={selectedIndex === index ? "nav-link active fw-bold" : "nav-link"}
+                      to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                  >
+                      {item}
+                  </Link>
+                  )
               }
-              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-            >
-              {item}
-            </Link>
           </li>
         ))}
       </ul>

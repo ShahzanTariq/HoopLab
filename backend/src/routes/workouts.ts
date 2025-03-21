@@ -22,10 +22,10 @@ router.get('/workouts', async (req: Request, res: Response) => {
   try {
     const command = new ScanCommand(params);
     const response = await dynamoDBClient.send(command);
-    console.log('✅ Successfully fetched data from DynamoDB:', response.Items);
+    console.log('Successfully fetched data from DynamoDB:', response.Items);
     res.json(response.Items); // Return the fetched items
   } catch (error) {
-    console.error('❌ Error fetching data from DynamoDB:', error);
+    console.error('Error fetching data from DynamoDB:', error);
     res.status(500).json({ error: 'Failed to fetch data' });
   }
 });

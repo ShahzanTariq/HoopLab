@@ -1,15 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+import { AuthProvider } from "react-oidc-context";
+import { MantineProvider } from '@mantine/core';
+
+const cognitoAuthConfig = {
+  authority: "https://cognito-idp.ca-central-1.amazonaws.com/ca-central-1_2nDSdD4R9",
+  client_id: "6ciq9qotdr1snk75j014hg6q49",
+  redirect_uri: "http://localhost:3000/",
+  post_logout_redirect_uri: 'http://localhost:3000/workout',
+  response_type: "code",
+  scope: "email openid profile",
+};
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <MantineProvider defaultColorScheme="dark">
+      <AuthProvider {...cognitoAuthConfig}>
+        <App />
+      </AuthProvider>
+    </MantineProvider>
   </React.StrictMode>
 );
 
