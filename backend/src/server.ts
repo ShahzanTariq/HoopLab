@@ -1,9 +1,10 @@
-import express, { Request, Response } from "express";
+import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, ScanCommand} from "@aws-sdk/lib-dynamodb";
 import { workerData } from "worker_threads";
+import contactRoute from "./routes/contact"; // Import the send-email route
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ const dynamoClient = new DynamoDBClient({
 const docClient = DynamoDBDocumentClient.from(dynamoClient); 
 
 app.use(cors());
+app.use(express.json()); // Middleware to parse JSON request bodies
 
 // Test Route: Check if the server is running
 app.get("/", (req: Request, res: Response) => {
@@ -54,6 +56,9 @@ app.get("/workouts", async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch data" });
   }
 });
+
+// Send Email Route
+app.use("/contact", contactRoute); // Mount the contact route
 
 // Start the server
 app.listen(PORT, () => {
