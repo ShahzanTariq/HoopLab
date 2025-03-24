@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
@@ -6,6 +6,7 @@ import { DynamoDBDocumentClient, PutCommand, UpdateCommand, GetCommand, ScanComm
 import { v4 as uuidv4 } from 'uuid';
 import bodyParser from 'body-parser';
 import { Redshift } from "aws-sdk";
+import contactRoute from "./routes/contact"; // Import the send-email route
 
 // Load environment variables
 dotenv.config();
@@ -26,6 +27,7 @@ const dynamoClient = new DynamoDBClient({
 const docClient = DynamoDBDocumentClient.from(dynamoClient); 
 
 app.use(cors());
+app.use(express.json()); // Middleware to parse JSON request bodies
 
 // Test Route: Check if the server is running
 app.get("/", (req: Request, res: Response) => {
@@ -167,6 +169,8 @@ app.get('/api/workoutPlan/user/:userId', async (req: Request, res: Response) => 
   }
 });
 
+// Send Email Route
+app.use("/contact", contactRoute); // Mount the contact route
 
 // Start the server
 app.listen(PORT, () => {
