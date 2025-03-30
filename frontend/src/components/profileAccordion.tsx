@@ -105,7 +105,7 @@ const ProfileAccordion: React.FC<AccordionProps> = ({ plan, onEdit, onDelete }) 
                     {isCurrentRowEditing ? (
                         <TextInput size="xs" value={workout.videoURL} onChange={(e) => handleWorkoutChange(index, 'videoURL', e.currentTarget.value)} />
                     ) : (
-                         workout.videoURL ? ( <a href={workout.videoURL} target="_blank" rel="noopener noreferrer">Link</a> ) : ('-')
+                         workout.videoURL ? ( <a href={workout.videoURL} target="_blank" rel="noopener noreferrer">View Example</a> ) : ('-')
                     )}
                 </Table.Td>
                  {/* Notes */}
@@ -167,7 +167,7 @@ const ProfileAccordion: React.FC<AccordionProps> = ({ plan, onEdit, onDelete }) 
                                     <Table.Th w={80}>Sets</Table.Th>
                                     <Table.Th>Reps</Table.Th>
                                     <Table.Th>Description</Table.Th>
-                                    <Table.Th w={80}>Link</Table.Th>
+                                    <Table.Th w={120}>Video</Table.Th>
                                     <Table.Th w={220}>Notes</Table.Th>
                                     <Table.Th w={50} style={{ textAlign: 'center' }}>Actions</Table.Th>
                                 </Table.Tr>
