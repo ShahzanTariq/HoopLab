@@ -1,113 +1,129 @@
 import { useAuth } from "react-oidc-context";
 import React, { useState, useEffect } from 'react';
-import { Text, Button, Modal, } from '@mantine/core';
-import ProfileAccordion from '../components/profileAccordion';
-
+import { Text } from '@mantine/core';
+import ProfileAccordion from '../components/profileAccordion'; // Adjust path if necessary
 
 function Profile() {
     const { isAuthenticated, user } = useAuth();
     const [userPlans, setUserPlans] = useState<any[]>([]);
-    const [opened, setOpened] = useState(false); // For editing modal
-    const [editingPlan, setEditingPlan] = useState<any>(userPlans[0]) // current plan being edited
-    const [editedPlanName, setEditedPlanName] = useState(""); // state for edited plan values
-    const [editedWorkouts, setEditedWorkouts] = useState<any[]>([]);
 
     const fetchUserPlans = async () => {
-        if (isAuthenticated && user) {
+        if (isAuthenticated && user?.profile?.sub) { // Add null checks for user and profile
             try {
+                console.log("Fetching plans for user:", user.profile.sub);
                 const response = await fetch(`http://localhost:5000/api/workoutPlan/user/${user.profile.sub}`);
                 if (response.ok) {
                     const plans = await response.json();
-                    console.log(plans)
+                    console.log("Fetched plans:", plans);
                     setUserPlans(plans);
                 } else {
-                    
+                    console.error("Failed to fetch user plans:", response.status, await response.text());
+                    setUserPlans([]); // Clear plans on error
                 }
-            } 
+            }
             catch (error) {
                     console.error("Error fetching user plans", error);
+                    setUserPlans([]); // Clear plans on error
             }
+        } else {
+            console.log("User not authenticated or user ID missing, clearing plans.");
+            setUserPlans([]); // Clear plans if not authenticated
         }
     };
 
     useEffect(() => {
         fetchUserPlans();
-    }, [isAuthenticated, user]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthenticated, user]); // Dependency array is correct
 
-    const handleEditClick = (plan:any) => {
-        setEditingPlan(plan);
-        setEditedPlanName(plan.planName);
-        setEditedWorkouts([...plan.workouts]);
-        setOpened(true);
-    };
 
     const handlePlanUpdate = async (planID: number, updatedWorkouts: any[]) => {
-        if (user)
+        if (user?.profile?.sub) { // Add null check
             try {
                 const workoutsToUpdate = updatedWorkouts.map(workout => ({
-                    workoutId: workout.workoutID,
+                    workoutId: workout.workoutID, 
                     workoutName: workout.workoutName,
                     sets: workout.sets,
                     reps: workout.reps,
                     description: workout.description,
                     videoURL: workout.videoURL,
-                    category: workout.category,
                     notes: workout.notes
                   }));
 
-                const response = await fetch(`http://localhost:5000/plan/user/${user.profile.sub}/plan/${planID}`, {
+                const response = await fetch(`http://localhost:5000/plan/user/${user.profile.sub}/plan/${planID}`, { 
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
+                        //I should add authorization like user.access_token
                     },
-                    body: JSON.stringify({workouts: workoutsToUpdate}), // Send the entire plan data
+                    body: JSON.stringify({ workouts: workoutsToUpdate }), 
                 });
 
-                if (!response.ok) {
-                    // ... error handling (display error message, etc.)
-                }
-
-
-                // Successful update: Re-fetch data to keep the UI in sync.
-
+                if (response.ok) {
+                    console.log(`Plan ${planID} updated successfully.`);
                     fetchUserPlans();
+                } else {
+                     console.error("Failed to update plan:", response.status, await response.text());
+                    // Consider showing an error message to the user
+                }
             } catch (error) {
-                // ... error handling
+                 console.error("Error updating plan", error);
+                 // Consider showing an error message to the user
             }
-
+        } else {
+            console.error("Cannot update plan: User not authenticated or user ID missing.");
+        }
     };
 
-    const handlePlanNameChange = (event:any) => {
-        setEditedPlanName(event.currentTarget.value)
-    }
+    
+    const handleDeleteWorkout = async (planID: number | string, workoutIDToDelete: number | string) => {
+        if (!user?.profile?.sub) {
+            console.error("Cannot delete workout: User not authenticated or user ID missing.");
+            return; 
+        }
+
+        console.log(`Attempting to delete workout ${workoutIDToDelete} from plan ${planID}`);
+
+        try {
+            const response = await fetch(`http://localhost:5000/plan/user/${user.profile.sub}/plan/${planID}/workout/${workoutIDToDelete}`, {
+                method: 'DELETE',
+                headers: {
+                    //I should add authorization like user.access_token
+                },
+            });
+
+            if (response.ok) {
+                console.log(`Workout ${workoutIDToDelete} deleted successfully from plan ${planID}.`);
+                fetchUserPlans(); 
+            } else {
+                console.error("Failed to delete workout:", response.status, await response.text());
+                // Consider showing an error message to the user
+            }
+        } catch (error) {
+            console.error("Error deleting workout:", error);
+            // Consider showing an error message to the user
+        }
+    };
+
+
 
     return (
         <div>
-            {editingPlan!= null &&
-                <Modal
-                    opened={opened}
-                    onClose={() => setOpened(false)}
-                    title= {"Editing " + editingPlan.planName}
-                >
-                    <Text>Greetings</Text>
+            {userPlans.length === 0 && (
+                 <Text>No workout plans found. Create one!</Text> 
+            )}
 
-                </Modal>
-            
-            }
-            
             {userPlans.map((plan) => (
-            <div key={plan.planID}>
-
-                <ProfileAccordion plan={plan} onEdit={(updatedWorkouts) => handlePlanUpdate(plan.planID, updatedWorkouts)} />
-
-
-            </div>
-        
-
+                <div key={plan.planID} style={{ marginBottom: '20px' }}>
+                    <ProfileAccordion
+                        plan={plan}
+                        onEdit={(updatedWorkouts) => handlePlanUpdate(plan.planID, updatedWorkouts)}
+                        onDelete={(workoutIDToDelete) => handleDeleteWorkout(plan.planID, workoutIDToDelete)} 
+                    />
+                </div>
             ))}
-    </div>
+        </div>
     );
 }
-
 
 export default Profile;
