@@ -1,15 +1,18 @@
 import { useAuth } from "react-oidc-context";
 import React, { useState, useEffect } from 'react';
-import { Text } from '@mantine/core';
+import { Text, Loader} from '@mantine/core';
 import ProfileAccordion from '../components/profileAccordion'; // Adjust path if necessary
+
 
 function Profile() {
     const { isAuthenticated, user } = useAuth();
     const [userPlans, setUserPlans] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true); // loading state
 
     const fetchUserPlans = async () => {
         if (isAuthenticated && user?.profile?.sub) { // Add null checks for user and profile
             try {
+                setLoading(true); // Set loading to true before fetching
                 console.log("Fetching plans for user:", user.profile.sub);
                 const response = await fetch(`http://localhost:5000/api/workoutPlan/user/${user.profile.sub}`);
                 if (response.ok) {
@@ -24,10 +27,13 @@ function Profile() {
             catch (error) {
                     console.error("Error fetching user plans", error);
                     setUserPlans([]); // Clear plans on error
+            } finally {
+                setLoading(false); // Set loading to false after fetching
             }
         } else {
             console.log("User not authenticated or user ID missing, clearing plans.");
             setUserPlans([]); // Clear plans if not authenticated
+            setLoading(false); // Set loading to false if not authenticated
         }
     };
 
@@ -109,19 +115,27 @@ function Profile() {
 
     return (
         <div>
-            {userPlans.length === 0 && (
-                 <Text>No workout plans found. Create one!</Text> 
-            )}
+            {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', height: '100vh' }}>
 
-            {userPlans.map((plan) => (
-                <div key={plan.planID} style={{ marginBottom: '20px' }}>
-                    <ProfileAccordion
-                        plan={plan}
-                        onEdit={(updatedWorkouts) => handlePlanUpdate(plan.planID, updatedWorkouts)}
-                        onDelete={(workoutIDToDelete) => handleDeleteWorkout(plan.planID, workoutIDToDelete)} 
-                    />
+                    <Loader size="lg" />
                 </div>
-            ))}
+            ) : (
+                <>
+                    {userPlans.map((plan) => (
+                        <div key={plan.planID} style={{ marginBottom: '20px' }}>
+                            <ProfileAccordion
+                                plan={plan}
+                                onEdit={(updatedWorkouts) => handlePlanUpdate(plan.planID, updatedWorkouts)}
+                                onDelete={(workoutIDToDelete) => handleDeleteWorkout(plan.planID, workoutIDToDelete)} 
+                            />
+                        </div>
+                    ))}
+                    {userPlans.length === 0 && (
+                        <Text>No workout plans found. Create one!</Text> 
+                    )}
+                </>
+            )}
         </div>
     );
 }

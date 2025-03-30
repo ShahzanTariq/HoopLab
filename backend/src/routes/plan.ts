@@ -1,20 +1,9 @@
 import express ,{ Request, Response } from "express";
 
-import dotenv from "dotenv";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { docClient } from "../config/dynamoDB"; // Import the DynamoDB client
 import { DynamoDBDocumentClient, PutCommand, UpdateCommand, GetCommand, ScanCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
+
 const router = express.Router();
-
-dotenv.config();
-
-const dynamoClient = new DynamoDBClient({
-  region: process.env.AWS_REGION, // e.g., "us-east-1"
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-});
-const docClient = DynamoDBDocumentClient.from(dynamoClient); 
 
 //Update workoutplan workout atttribute (by overwriting current workout so it doesnt add on)
 router.put("/user/:userID/plan/:planID", async (req: Request<{planID: string, userID:string}, {}, { userId: string, planId: string, workouts: { workoutId: string, workoutName: string, sets: number, reps: number }[] }>
