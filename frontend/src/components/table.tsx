@@ -37,8 +37,18 @@ const TableSelection: React.FC<TableProps> = ({ data, onSelectionChange }) => {
                 onClick={() => toggleRow(item)}
                 style={{ cursor: 'pointer' }}
             >
-                <Table.Td>
-                    <Checkbox checked={selected} onChange={() => toggleRow(item)} />
+                <Table.Td
+                    onClick={(e) => e.stopPropagation()} // Prevent row click when clicking the checkbox
+                >
+                    <Checkbox 
+                        checked={selected}
+                        onChange={() => toggleRow(item)} // Checkbox toggles selection
+                        styles={{
+                            input: {
+                                cursor: 'pointer', // Ensure pointer cursor on hover
+                            },
+                        }}
+                     />
                 </Table.Td>
             <Table.Td>
             <Group gap="sm">

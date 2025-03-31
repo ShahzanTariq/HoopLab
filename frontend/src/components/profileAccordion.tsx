@@ -2,7 +2,7 @@
 import { Accordion, ActionIcon, AccordionControlProps, Center, Table, Text, TextInput, NumberInput, Group, Tooltip } from '@mantine/core'; // Added Tooltip
 import { IconPencil, IconCheck, IconX, IconTrash, IconAlertTriangle } from '@tabler/icons-react'; // Added IconAlertTriangle (optional visual cue)
 import React, { useState, useEffect } from 'react';
-import classes from './styles/profileAccoridion.module.css';
+import classes from './styles/profileAccordion.module.css';
 
 
 interface AccordionProps {

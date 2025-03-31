@@ -1,7 +1,8 @@
 import { useAuth } from "react-oidc-context";
 import React, { useState, useEffect } from 'react';
 import { Text, Loader} from '@mantine/core';
-import ProfileAccordion from '../components/profileAccordion'; // Adjust path if necessary
+import ProfileAccordion from '../components/profileAccordion';
+import './styles/profile.css';
 
 
 function Profile() {
@@ -116,16 +117,15 @@ function Profile() {
 
 
     return (
-        <div>
+        <div className="profile-container">
             {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', height: '100vh' }}>
-
+                <div className="loader-container">
                     <Loader size="lg" />
                 </div>
             ) : (
                 <>
                     {userPlans.map((plan) => (
-                        <div key={plan.planID} style={{ marginBottom: '20px' }}>
+                        <div key={plan.planID} className="plan-container">
                             <ProfileAccordion
                                 plan={plan}
                                 onEdit={(updatedWorkouts) => handlePlanUpdate(plan.planID, updatedWorkouts)}
@@ -134,7 +134,7 @@ function Profile() {
                         </div>
                     ))}
                     {userPlans.length === 0 && (
-                        <Text>No workout plans found. Create one!</Text> 
+                        <Text className="no-plans-text">No workout plans found. Create one!</Text> 
                     )}
                 </>
             )}

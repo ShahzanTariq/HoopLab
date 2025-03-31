@@ -1,0 +1,32 @@
+/* Ensure the container takes up the full width and centers the content */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  margin-top: 80px; /* Add space below the navbar */
+  padding: 20px; /* Add some padding around the content */
+  box-sizing: border-box;
+}
+
+/* Style for the loader container */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 80px); /* Full height minus navbar height */
+}
+
+/* Style for each plan container */
+.plan-container {
+  width: 100%;
+  max-width: 1000px; /* Increased the width of the plans */
+  margin-bottom: 20px; /* Add spacing between plans */
+}
+
+/* Style for the "No plans" text */
+.no-plans-text {
+  font-size: 18px;
+  color: #555;
+  margin-top: 20px;
+  text-align: center;
+}
