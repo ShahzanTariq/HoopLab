@@ -9,10 +9,12 @@ function Profile() {
     const [userPlans, setUserPlans] = useState<any[]>([]);
     const [loading, setLoading] = useState(true); // loading state
 
-    const fetchUserPlans = async () => {
+    const fetchUserPlans = async (deleting: boolean) => {
         if (isAuthenticated && user?.profile?.sub) { // Add null checks for user and profile
             try {
-                setLoading(true); // Set loading to true before fetching
+                if (!deleting){
+                    setLoading(true); // Set loading to true before fetching
+                }
                 console.log("Fetching plans for user:", user.profile.sub);
                 const response = await fetch(`http://localhost:5000/api/workoutPlan/user/${user.profile.sub}`);
                 if (response.ok) {
@@ -38,7 +40,7 @@ function Profile() {
     };
 
     useEffect(() => {
-        fetchUserPlans();
+        fetchUserPlans(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated, user]); // Dependency array is correct
 
@@ -47,7 +49,7 @@ function Profile() {
         if (user?.profile?.sub) { // Add null check
             try {
                 const workoutsToUpdate = updatedWorkouts.map(workout => ({
-                    workoutId: workout.workoutID, 
+                    workoutId: workout.workoutId, 
                     workoutName: workout.workoutName,
                     sets: workout.sets,
                     reps: workout.reps,
@@ -67,7 +69,7 @@ function Profile() {
 
                 if (response.ok) {
                     console.log(`Plan ${planID} updated successfully.`);
-                    fetchUserPlans();
+                    fetchUserPlans(true);
                 } else {
                      console.error("Failed to update plan:", response.status, await response.text());
                     // Consider showing an error message to the user
@@ -100,7 +102,7 @@ function Profile() {
 
             if (response.ok) {
                 console.log(`Workout ${workoutIDToDelete} deleted successfully from plan ${planID}.`);
-                fetchUserPlans(); 
+                fetchUserPlans(true); 
             } else {
                 console.error("Failed to delete workout:", response.status, await response.text());
                 // Consider showing an error message to the user
