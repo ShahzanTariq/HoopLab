@@ -43,30 +43,30 @@ const Workout: React.FC = () => {
     return levelMatch && categoryMatch;
   });
 
+  const fetchUserPlans = async (createNew: boolean) => {
+    if (isAuthenticated && user) {
+      try {
+      const response = await fetch(`http://localhost:5000/api/workoutPlan/user/${user.profile.sub}`);
+      if (response.ok) {
+          const plans = await response.json();
+          console.log(plans)
+          setUserPlans(plans);
+          if(plans.length > 0 && !createNew){
+              setSelectedPlan(plans[0]);
+          }
+
+      } else {
+          
+      }
+      } catch (error) {
+      console.error("Error fetching user plans", error);
+      }
+    }
+  };
+
     useEffect(() => {
-        const fetchUserPlans = async () => {
-        if (isAuthenticated && user) {
-            try {
-            const response = await fetch(`http://localhost:5000/api/workoutPlan/user/${user.profile.sub}`);
-            if (response.ok) {
-                const plans = await response.json();
-                console.log(plans)
-                setUserPlans(plans);
-                if(plans.length > 0){
-                    setSelectedPlan(plans[0]);
-                }
-
-            } else {
-                
-            }
-            } catch (error) {
-            console.error("Error fetching user plans", error);
-            }
-        }
-        };
-
-        fetchUserPlans();
-    }, [isAuthenticated, user]);
+        fetchUserPlans(false);
+    }, []);
 
   const handleWorkoutSelectionChange = (selectedRows: string[]) => {
     setSelectedWorkouts(selectedRows);
@@ -138,10 +138,11 @@ const Workout: React.FC = () => {
           });
 
           if (response.ok) {
-            const { planId } = await response.json();
-            const newPlan = { planId, planName };
+            const {planID} = await response.json();
+            const newPlan = { planID, planName }; 
+            fetchUserPlans(true);
             setUserPlans([...userPlans, newPlan]);
-            setSelectedPlan(newPlan); // Update selected plan in Workout.tsx
+            setSelectedPlan(newPlan) 
           } else {
           // Handle error
           }
