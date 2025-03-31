@@ -4,6 +4,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { AuthProvider } from "react-oidc-context";
+import { WebStorageStateStore } from "oidc-client-ts";
+
 import { MantineProvider } from '@mantine/core';
 
 const cognitoAuthConfig = {
@@ -13,6 +15,7 @@ const cognitoAuthConfig = {
   post_logout_redirect_uri: 'http://localhost:3000/workout',
   response_type: "code",
   scope: "email openid profile",
+  userStore: new WebStorageStateStore({ store: window.localStorage }),
 };
 
 
