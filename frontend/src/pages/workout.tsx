@@ -25,7 +25,7 @@ const Workout: React.FC = () => {
   useEffect(() => {
     const fetchWorkouts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/workout');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/workout`);
         const data = await response.json();
         setWorkouts(data);
       } catch (error) {
@@ -34,7 +34,7 @@ const Workout: React.FC = () => {
     };
 
     fetchWorkouts();
-    fetchUserPlans(false); 
+    fetchUserPlans(false);
   }, []);
 
   const filteredWorkouts = workouts.filter((workout: any) => {
@@ -47,7 +47,7 @@ const Workout: React.FC = () => {
   const fetchUserPlans = async (createNew: boolean) => {
     if (isAuthenticated && user) {
       try {
-      const response = await fetch(`http://localhost:5000/api/workoutPlan/user/${user.profile.sub}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/workoutPlan/user/${user.profile.sub}`);
       if (response.ok) {
           const plans = await response.json();
           console.log(plans)
@@ -57,7 +57,7 @@ const Workout: React.FC = () => {
           }
 
       } else {
-          
+
       }
       } catch (error) {
       console.error("Error fetching user plans", error);
@@ -96,7 +96,7 @@ const Workout: React.FC = () => {
             notes: ""
           }));
 
-      const response = await fetch('http://localhost:5000/api/workoutPlan/addWorkouts', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/workoutPlan/addWorkouts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -128,7 +128,7 @@ const Workout: React.FC = () => {
       }
       console.log(JSON.stringify({ userId: user.profile.sub, planName }));
       try {
-          const response = await fetch('http://localhost:5000/api/workoutPlan/create', {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/workoutPlan/create`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId: user.profile.sub, planName }),

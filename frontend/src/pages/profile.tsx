@@ -17,7 +17,7 @@ function Profile() {
                     setLoading(true); // Set loading to true before fetching
                 }
                 console.log("Fetching plans for user:", user.profile.sub);
-                const response = await fetch(`http://localhost:5000/api/workoutPlan/user/${user.profile.sub}`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/workoutPlan/user/${user.profile.sub}`);
                 if (response.ok) {
                     const plans = await response.json();
                     console.log("Fetched plans:", plans);
@@ -59,13 +59,13 @@ function Profile() {
                     notes: workout.notes
                   }));
 
-                const response = await fetch(`http://localhost:5000/plan/user/${user.profile.sub}/plan/${planID}`, { 
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/plan/user/${user.profile.sub}/plan/${planID}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         //I should add authorization like user.access_token
                     },
-                    body: JSON.stringify({ workouts: workoutsToUpdate }), 
+                    body: JSON.stringify({ workouts: workoutsToUpdate }),
                 });
 
                 if (response.ok) {
@@ -94,7 +94,7 @@ function Profile() {
         console.log(`Attempting to delete workout ${workoutIDToDelete} from plan ${planID}`);
 
         try {
-            const response = await fetch(`http://localhost:5000/plan/user/${user.profile.sub}/plan/${planID}/workout/${workoutIDToDelete}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/plan/user/${user.profile.sub}/plan/${planID}/workout/${workoutIDToDelete}`, {
                 method: 'DELETE',
                 headers: {
                     //I should add authorization like user.access_token
