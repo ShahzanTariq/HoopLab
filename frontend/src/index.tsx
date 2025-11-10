@@ -11,8 +11,8 @@ import { MantineProvider } from '@mantine/core';
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.ca-central-1.amazonaws.com/ca-central-1_2nDSdD4R9",
   client_id: "6ciq9qotdr1snk75j014hg6q49",
-  redirect_uri: "http://localhost:3000/",
-  post_logout_redirect_uri: 'http://localhost:3000/workout',
+  redirect_uri: "https://hooplab-omega.vercel.app/",
+  post_logout_redirect_uri: 'https://hooplab-omega.vercel.app/workout',
   response_type: "code",
   scope: "email openid profile",
   userStore: new WebStorageStateStore({ store: window.localStorage }),
